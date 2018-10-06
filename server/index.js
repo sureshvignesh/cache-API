@@ -1,9 +1,8 @@
 const path = require('path')
 const express = require('express')
-// const routine = require('./api-v1/routes/routine')
 const bodyParser = require('body-parser')
-
 const app = express()
+const cache = require('./api/v1/routes/cache')
 
 const port = process.env.PORT ? process.env.PORT : 8181
 const dist = path.join(__dirname, '../dist')
@@ -14,10 +13,10 @@ app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
 }))
 
-// app.use('/api/v1/routine', routine)
+app.use('/api/v1/cache', cache)
 
 app.get('*', (req, res) => {
-  res.send('Hello')
+  res.send('/')
 })
 
 app.listen(port, (error) => {
