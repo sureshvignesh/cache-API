@@ -78,7 +78,7 @@ curl -X DELETE \
 ## TTL
   TTL also uses lastUpdated timestamp and validates the presense. The TTL will be restet by updating the lastUpdated after every DB operation on the record.
 
-#Configuration
-##config.josn
+# Configuration
+## config.josn
 
 Use this file to configure TTL and maxCount
