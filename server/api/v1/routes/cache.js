@@ -1,5 +1,5 @@
 const express = require('express')
-const {getCacheByKey, updateCacheById, createCache, setCache, listCache, deleteCache } = require('../../../db/mongo')
+const {getCacheByKey, updateCacheByKey, createCache, setCache, listCache, deleteCache, deleteCacheByKey } = require('../../../db/mongo')
 const router = express.Router()
 
 /* GET cache key listing. */
@@ -24,8 +24,8 @@ router.get('/:key', async (req, res) => {
 
 /* UPDATE one cache. */
 
-router.patch('/:id', async (req, res) => {
-  const result = await updateCacheById(req.params.id, req.body.value)
+router.patch('/:key', async (req, res) => {
+  const result = await updateCacheByKey(req.params.id, req.body.value)
   res.send(result)
 })
 
@@ -35,9 +35,10 @@ router.post('/:id', async (req, res) => {
   res.send(result)
 })
 
-
-router.get('/key', (req, res) => {
-  res.send(getCacheById(res.params.id))
+/* Delete one cache by Key. */
+router.delete('/:key', async (req, res) => {
+  let result = await (deleteCacheByKey(req.params.key))
+  res.send(result)
 })
 
 /* DELETE all cache. */

@@ -55,7 +55,7 @@ async function getCacheByKey(key) {
 /*
   Function to update cache by its key
 */
-async function updateCacheById(key, value) {
+async function updateCacheByKey(key, value) {
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').replaceOne(
     { "key" : key },
@@ -78,6 +78,13 @@ async function listCache() {
   return db.collection('cache').find().toArray()
 }
 
+async function deleteCacheByKey(key) {
+  const db = await dbPromise.catch(dbFailureFn)
+  return db.collection('cache').remove({
+    key: key
+  })
+}
+
 async function deleteCache() {
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').remove()
@@ -88,9 +95,10 @@ async function deleteCache() {
 
 module.exports = {
   getCacheByKey,
-  updateCacheById,
+  updateCacheByKey,
   createCache,
   getCacheByKey,
   listCache,
+  deleteCacheByKey,
   deleteCache
 }
