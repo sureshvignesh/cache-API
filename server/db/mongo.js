@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 const { MongoClient, ObjectId } = require('mongodb')
 const { mongodb: mongoSecrets } = require('./secrets.json')
+const {TTL, maxCount} = require('../config')
+let count
 
 const dbFailureFn = (e) => {
   console.error(e)
@@ -30,6 +32,9 @@ const dbPromise = MongoClient.connect(mongoSecrets.url, { useNewUrlParser: true 
   .then((client) => {
     console.log('connected successfully to', mongoSecrets.url, mongoSecrets.db)
     const db = client.db(mongoSecrets.db)
+    getCount().then(c => {
+      count = c
+    })
     return db
   })
   .catch(dbFailureFn)
@@ -46,6 +51,7 @@ async function getCollection(collection) {
   Function to get case by its _id
 */
 async function getCacheByKey(key) {
+  removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').findOne({
     key: key
@@ -56,40 +62,82 @@ async function getCacheByKey(key) {
   Function to update cache by its key
 */
 async function updateCacheByKey(key, value) {
+  removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').replaceOne(
     { "key" : key },
-    { "key": key, "value": value},
+    { "key": key, "value": value, "lastUpdated": Date.now()},
     { upsert: true })
+}
+
+
+async function getCount() {
+  removeExpired()
+  const db = await dbPromise.catch(dbFailureFn)
+  return db.collection('cache').countDocuments()
 }
 
 /*
   Function to get case by its _id
 */
 async function createCache(key, value) {
+  await removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
-  return db.collection('cache').insertOne( {
-    key: key, value: value
-  })
+  console.log('count --> ', count, key)
+  if (count >= maxCount) {
+    const all = await db.collection('cache').find({}).toArray()
+
+    let minDate = Infinity
+    let oldDoc
+    for (let doc of all) {
+      if (minDate > +doc.lastUpdated) {
+        minDate = +doc.lastUpdated
+        oldDoc = doc
+      }
+    }
+    count--
+    if (oldDoc) await db.collection('cache').deleteOne({_id: oldDoc._id})
+  }
+  count++
+  return db.collection('cache').replaceOne(
+    { "key" : key },
+    { "key": key, "value": value, "lastUpdated": Date.now()},
+    { upsert: true })
+
 }
 
 async function listCache() {
+  removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').find().toArray()
 }
 
 async function deleteCacheByKey(key) {
+  removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
-  return db.collection('cache').remove({
+  count--
+  return db.collection('cache').deleteOne({
     key: key
   })
 }
 
 async function deleteCache() {
+  removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
-  return db.collection('cache').remove()
+  count = 0
+  return db.collection('cache').deleteMany()
 }
 
+async function removeExpired() {
+  const db = await dbPromise.catch(dbFailureFn)
+  const results = (await db.collection('cache').find().toArray()) || []
+  for (let doc of results) {
+    if (+new Date() - +doc.lastUpdated > TTL) {
+      count--
+      db.collection('cache').deleteOne({_id: doc._id})
+    }
+  }
+}
 
 
 

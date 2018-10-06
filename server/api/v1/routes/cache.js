@@ -13,9 +13,9 @@ router.get('/', async (req, res) => {
 /* GET one cache. */
 router.get('/:key', async (req, res) => {
   let result = await (getCacheByKey(req.params.key))
-  if (result) {console.log('cache Hit!')}
+  if (result) {console.log('cache Hit')}
   else{
-    console.log('cache miss!')
+    console.log('cache miss')
     await createCache(req.params.key, String(Math.random()))
     result = await (getCacheByKey(req.params.key))
   }
