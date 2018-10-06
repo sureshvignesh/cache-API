@@ -48,7 +48,7 @@ async function getCollection(collection) {
 }
 
 /*
-  Function to get case by its _id
+  Function to get cache by its key
 */
 async function getCacheByKey(key) {
   removeExpired()
@@ -56,18 +56,6 @@ async function getCacheByKey(key) {
   return db.collection('cache').findOne({
     key: key
   })
-}
-
-/*
-  Function to update cache by its key
-*/
-async function updateCacheByKey(key, value) {
-  removeExpired()
-  const db = await dbPromise.catch(dbFailureFn)
-  return db.collection('cache').replaceOne(
-    { "key" : key },
-    { "key": key, "value": value, "lastUpdated": Date.now()},
-    { upsert: true })
 }
 
 
@@ -78,7 +66,7 @@ async function getCount() {
 }
 
 /*
-  Function to get case by its _id
+  Function to get create or update by its keys
 */
 async function createCache(key, value) {
   await removeExpired()
@@ -105,6 +93,9 @@ async function createCache(key, value) {
 
 }
 
+/*
+  Function to list cache keys
+*/
 async function listCache() {
   removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
@@ -120,6 +111,9 @@ async function deleteCacheByKey(key) {
   })
 }
 
+/*
+  Function to delete cache by key
+*/
 async function deleteCache() {
   removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
@@ -127,6 +121,9 @@ async function deleteCache() {
   return db.collection('cache').deleteMany()
 }
 
+/*
+  Function to remove TTL expired caches
+*/
 async function removeExpired() {
   const db = await dbPromise.catch(dbFailureFn)
   const results = (await db.collection('cache').find().toArray()) || []
@@ -142,7 +139,6 @@ async function removeExpired() {
 
 module.exports = {
   getCacheByKey,
-  updateCacheByKey,
   createCache,
   getCacheByKey,
   listCache,
