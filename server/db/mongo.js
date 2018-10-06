@@ -78,6 +78,12 @@ async function listCache() {
   return db.collection('cache').find().toArray()
 }
 
+async function deleteCache() {
+  const db = await dbPromise.catch(dbFailureFn)
+  return db.collection('cache').remove()
+}
+
+
 
 
 module.exports = {
@@ -85,5 +91,6 @@ module.exports = {
   updateCacheById,
   createCache,
   getCacheByKey,
-  listCache
+  listCache,
+  deleteCache
 }
