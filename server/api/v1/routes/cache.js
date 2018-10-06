@@ -7,8 +7,31 @@ router.get('/', async (req, res) => {
   await listCache()
   result = await (listCache())
   result = result.map(el => el.key)
-  res.send(result)
+  res.send(parseResult(result))
 })
+
+
+function parseResult(result){
+  let finalResult = {}
+  if (result) {
+    finalResult.status = 200
+    if (result.key) {
+      finalResult.data = {
+        key : result.key,
+        value: result.value
+      }
+    } else if (result.length >= 0) {
+      finalResult.data = result
+    }
+    finalResult.success= true
+  }  else {
+    finalResult.status = 501
+    finnalResult.error = {
+      message: result.message
+    }
+  }
+  return finalResult
+}
 
 /* GET one cache. */
 router.get('/:key', async (req, res) => {
@@ -19,33 +42,33 @@ router.get('/:key', async (req, res) => {
     await createCache(req.params.key, String(Math.random()))
     result = await (getCacheByKey(req.params.key))
   }
-  res.send(result)
+  res.send(parseResult(result))
 })
 
 /* UPDATE one cache. */
 
 router.patch('/:key', async (req, res) => {
   const result = await updateCacheByKey(req.params.id, req.body.value)
-  res.send(result)
+  res.send(parseResult(result))
 })
 
 
 router.post('/:id', async (req, res) => {
   const result = await createCache(req.params.id, req.body.value)
-  res.send(result)
+  res.send(parseResult(result))
 })
 
 /* Delete one cache by Key. */
 router.delete('/:key', async (req, res) => {
   let result = await (deleteCacheByKey(req.params.key))
-  res.send(result)
+  res.send(parseResult(result))
 })
 
 /* DELETE all cache. */
 router.delete('/', async (req, res) => {
   await deleteCache()
   result = await (deleteCache())
-  res.send(result)
+  res.send(parseResult(result))
 })
 
 module.exports = router

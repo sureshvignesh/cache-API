@@ -83,7 +83,6 @@ async function getCount() {
 async function createCache(key, value) {
   await removeExpired()
   const db = await dbPromise.catch(dbFailureFn)
-  console.log('count --> ', count, key)
   if (count >= maxCount) {
     const all = await db.collection('cache').find({}).toArray()
 
