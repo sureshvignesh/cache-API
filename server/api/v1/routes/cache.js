@@ -1,13 +1,16 @@
 const express = require('express')
-const {getCacheByKey, updateCacheById, createCache, setCache } = require('../../../db/mongo')
+const {getCacheByKey, updateCacheById, createCache, setCache, listCache } = require('../../../db/mongo')
 const router = express.Router()
 
-/* GET users listing. */
-router.get('/', (req, res) => {
-  res.send('You landed on /api/cache/')
+/* GET cache key listing. */
+router.get('/', async (req, res) => {
+  await listCache()
+  result = await (listCache())
+  result = result.map(el => el.key)
+  res.send(result)
 })
 
-/* GET one user. */
+/* GET one cache. */
 router.get('/:key', async (req, res) => {
   let result = await (getCacheByKey(req.params.key))
   if (!result) {
@@ -17,6 +20,8 @@ router.get('/:key', async (req, res) => {
   }
   res.send(result)
 })
+
+/* UPDATE one cache. */
 
 router.patch('/:id', async (req, res) => {
   const result = await updateCacheById(req.params.id, req.body.value)

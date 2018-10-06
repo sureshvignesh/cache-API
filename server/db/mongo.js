@@ -53,20 +53,7 @@ async function getCacheByKey(key) {
 }
 
 /*
-//   Function to get case by its _id
-// */
-// async function setCache(key, value) {
-//   const db = await dbPromise.catch(dbFailureFn)
-//   return db.collection('cache').update({
-//     $set: {
-//       key,
-//       value,
-//     }
-//   })
-// }
-
-/*
-  Function to get case by its _id
+  Function to update cache by its key
 */
 async function updateCacheById(key, value) {
   const db = await dbPromise.catch(dbFailureFn)
@@ -80,17 +67,23 @@ async function updateCacheById(key, value) {
   Function to get case by its _id
 */
 async function createCache(key, value) {
-  console.log(value)
   const db = await dbPromise.catch(dbFailureFn)
   return db.collection('cache').insertOne( {
     key: key, value: value
   })
 }
 
+async function listCache() {
+  const db = await dbPromise.catch(dbFailureFn)
+  return db.collection('cache').find().toArray()
+}
+
+
 
 module.exports = {
   getCacheByKey,
   updateCacheById,
   createCache,
-  getCacheByKey
+  getCacheByKey,
+  listCache
 }
