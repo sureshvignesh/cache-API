@@ -15,9 +15,9 @@ Method: GET
 
 curl Example: 
 
-curl -X GET \
-  http://localhost:8181/api/v1/cache/wefr34gvewcsdvsd \
-  -H 'Content-Type: application/json' 
+	curl -X GET \
+	  http://localhost:8181/api/v1/cache/wefr34gvewcsdvsd \
+	  -H 'Content-Type: application/json' 
 
 ## All stored Keys
 
@@ -27,9 +27,9 @@ Method: GET
 
 curl Example: 
 
-curl -X GET \
-  http://localhost:8181/api/v1/cache/ \
-  -H 'Content-Type: application/json' 
+	curl -X GET \
+	  http://localhost:8181/api/v1/cache/ \
+	  -H 'Content-Type: application/json' 
   
 ## Create or Update Data
 
@@ -39,12 +39,12 @@ Method: POST
 
 curl Example: 
 
-curl -X POST \
-  http://localhost:8181/api/v1/cache/sefcsdvcsd \
-  -H 'Content-Type: application/json' \
-  -d '{
-	"value": "text123  hsfbsdf 12"
-}'
+	curl -X POST \
+	  http://localhost:8181/api/v1/cache/sefcsdvcsd \
+	  -H 'Content-Type: application/json' \
+	  -d '{
+		"value": "text123  hsfbsdf 12"
+	}'
 
 ## Delete a cache of given key
 
@@ -54,9 +54,9 @@ Method: DELETE
 
 curl Example: 
 
-curl -X DELETE \
-  http://localhost:8181/api/v1/cache/kjnjknjkjknk \
-  -H 'Content-Type: application/json' 
+	curl -X DELETE \
+	  http://localhost:8181/api/v1/cache/kjnjknjkjknk \
+	  -H 'Content-Type: application/json' 
   
 ## Delete all the keys
 
@@ -66,10 +66,10 @@ Method: DELETE
 
 curl Example: 
 
-curl -X DELETE \
-  http://localhost:8181/api/v1/cache/ \
-  -H 'Cache-Control: no-cache' \
-  -H 'Content-Type: application/json' 
+	curl -X DELETE \
+	  http://localhost:8181/api/v1/cache/ \
+	  -H 'Cache-Control: no-cache' \
+	  -H 'Content-Type: application/json' 
 
 # Conditions
 ## Cache Limit
